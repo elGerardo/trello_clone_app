@@ -3,14 +3,13 @@ import { data } from "./testData";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./draggableCard";
 
-const Kanban = () => {
+export default function Board() {
   const [columns, setColumns] = useState(data);
 
   const onDragEnd = (result: any, columns: any, setColumns: any) => {
     if (!result.destination) return;
     const { source, destination } = result;
     if (source.droppableId !== destination.droppableId) {
-      //change of droppable(column)
       const newData = columns;
       const sourceColumn = newData[source.droppableId];
       const sourceItems = sourceColumn.tasks[source.index];
@@ -81,35 +80,36 @@ const Kanban = () => {
     <DragDropContext
       onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
     >
-      <div className="flex">
-        <div className="m-8 flex w-full min-h-80vh">
-          {columns.map(({ tasks, order }) => {
+      <div className="flex mt-12">
+        <div className="flex w-full min-h-96">
+          {columns.map(({ name, tasks, order }) => {
+            
             return (
-              <Droppable key={order - 1} droppableId={(order - 1).toString()}>
-                {(provided) => (
-                  <div
-                    className="min-h-100 flex flex-col bg-gray-200 min-w-56 rounded-lg p-15 m-45"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {tasks.map((item, index) => (
-                      <DraggableCard
-                        key={`${item.title}-${index}`}
-                        item={item}
-                        index={index}
-                        parentOrder={order}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
+                <Droppable key={order - 1} droppableId={(order - 1).toString()}>
+                  {(provided) => (
+
+                    <div
+                      className="flex flex-col relative bg-c-gray-200 mx-1 w-72 rounded-md"
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      <h2 className="absolute -mt-8">{name}</h2>
+                      {tasks.map((item: any, index: number) => (
+                        <DraggableCard
+                          key={`${item.title}-${index}`}
+                          item={item}
+                          index={index}
+                          parentOrder={order}
+                        />
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
             );
           })}
         </div>
       </div>
     </DragDropContext>
   );
-};
-
-export default Kanban;
+}

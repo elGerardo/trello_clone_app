@@ -1,19 +1,42 @@
+import Badge from "@/components/badge";
+import { ITask } from "@/contracts/tasks.interface";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-const DraggableCard = ({ item, index, parentOrder }: { item: any, index: any, parentOrder: any }) => {
 
-    const draggableId = `${parentOrder}-${item.secuence}`
+const DraggableCard = ({
+  item,
+  index,
+  parentOrder,
+}: {
+  item: ITask;
+  index: number;
+  parentOrder: number;
+}) => {
+  const draggableId = `${parentOrder}_${item.secuence}`;
 
   return (
-    <Draggable key={item.secuence} draggableId={draggableId.toString()} index={index}>
+    <Draggable
+      key={item.secuence}
+      draggableId={draggableId.toString()}
+      index={index}
+    >
       {(provided) => (
         <div
+          className=""
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <div className="max-w-44 bg-white">
-            <p>{item.description}</p>
+          <div className="rounded-md text-xs p-3 mt-2 mx-2 bg-white">
+            <div className="flex justify-between">
+              <p className="text-c-gray-300 text-base">{item.title}</p>
+              <Badge text={item.priority.name} color={item.priority.color} />
+            </div>
+            <p className="text-c-gray-300 mt-3">
+              {item.description.length > 100
+                ? item.description.substring(0, 100) + "..."
+                : item.description}
+            </p>
           </div>
         </div>
       )}
@@ -22,8 +45,3 @@ const DraggableCard = ({ item, index, parentOrder }: { item: any, index: any, pa
 };
 
 export default DraggableCard;
-
-// <span className="priority">
-// {item.Priority === 'High' ? (<RedArrow />) : item.Priority === 'Medium' ? (<YellowArrow />) : (<BlueArrow />)}
-// </span>
-// <div><CustomAvatar name={item.Assignee} isTable={false} size={16} /></div>

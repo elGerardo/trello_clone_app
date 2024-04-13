@@ -17,7 +17,9 @@ const config: Config = {
         "primary": "#222831",
         "secondary": "#EEEEEE",
         "dark": "#31363F",
-        "c-gray": "#61677A"
+        "c-gray-300": "#61677A",
+        "c-gray-200": "#EEEFF1",
+        "c-gray-100": "#F7F7F9"
       }
     },
   },
