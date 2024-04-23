@@ -7,7 +7,8 @@ export default function Input({
     value,
     inputRef,
     placeholder = "",
-    type = "text"  ,
+    type = "text",
+    label
   }: {
     id?: string
     type?: "text" | "number" | "password";
@@ -18,8 +19,11 @@ export default function Input({
     className?: string;
     inputRef?: any;
     placeholder?: string;
+    label?: string
   }) {
     return (
+      <>
+      {label != null && <label>{label}</label>}
       <input
         {...(id !== undefined && { id })}
         {...(value !== undefined && { value })}
@@ -31,6 +35,7 @@ export default function Input({
         disabled={disabled}
         required={required}
       />
+      </>
     );
   }
   

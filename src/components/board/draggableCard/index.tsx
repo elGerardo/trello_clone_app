@@ -7,12 +7,20 @@ const DraggableCard = ({
   item,
   index,
   parentOrder,
+  isUpdatingColumns,
+  handleIsOnClick,
 }: {
   item: ITask;
   index: number;
   parentOrder: number;
+  isUpdatingColumns: boolean;
+  handleIsOnClick?: () => void;
 }) => {
   const draggableId = `${parentOrder}_${item.secuence}`;
+
+  const handleOnClick = () => {
+    if (handleIsOnClick) handleIsOnClick();
+  };
 
   return (
     <Draggable
@@ -22,17 +30,22 @@ const DraggableCard = ({
     >
       {(provided) => (
         <div
-          className=""
+          className={
+            isUpdatingColumns ? "pointer-events-none" : "pointer-events-auto"
+          }
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          onClick={handleOnClick}
         >
-          <div className="rounded-md text-xs p-3 mt-2 mx-2 bg-white">
-            <div className="flex justify-between">
-              <p className="text-c-gray-300 text-base">{item.title}</p>
-              <Badge text={item.priority.name} color={item.priority.color} />
-            </div>
-            <p className="text-c-gray-300 mt-3">
+          <div
+            className={`rounded-md text-xs p-3 mt-2 mx-2 ${
+              isUpdatingColumns ? "bg-c-gray-100" : "bg-white"
+            }`}
+          >
+            <Badge text={item.priority.name} color={item.priority.color}/>
+            <p className="text-base font-bold mt-3">{item.title}</p>
+            <p className="text-c-gray-300">
               {item.description.length > 100
                 ? item.description.substring(0, 100) + "..."
                 : item.description}

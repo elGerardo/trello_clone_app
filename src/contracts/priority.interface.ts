@@ -1,4 +1,9 @@
 export interface IPriority {
-  name: "Low";
-  color: "#E1F3F8";
+  name: string;
+  color: string;
+  is_default: boolean;
+  is_first: boolean;
+  id: string
+  label: string
+  value: string
 }
