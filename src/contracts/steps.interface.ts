@@ -6,4 +6,6 @@ export interface ISteps {
     tasks: Array<ITask>
     value: string
     label: string
+    id: string
+    is_default: boolean
 }

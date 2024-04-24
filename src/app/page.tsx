@@ -84,7 +84,7 @@ export default function Home() {
     },
     view_board: () => {
       setModalForm(
-        <ConfigsForm onSubmit={(data: object) => handleOnSubmit(data)} />
+        <ConfigsForm onSubmit={(data: object) => handleOnSubmit(data)} catalog={{ steps: steps }} />
       );
       setIsModalOpen(true);
     },

@@ -1,13 +1,14 @@
+import { ISteps } from "@/contracts/steps.interface";
 import Tabs from "../tabs";
 import PriorityForm from "./forms/priorityForm";
-import StepForm from "./forms/stepForm copy";
+import StepForm from "./forms/stepForm";
 
 export default function ConfigsForm({
   onSubmit,
-  className = ""
+  catalog = { steps: [] },
 }: {
   onSubmit?: (data: object) => void;
-  className?: string
+  catalog?: { steps: Array<ISteps> };
 }) {
   const handleOnSubmit = (data: object) => {
     if (onSubmit) onSubmit(data);
@@ -25,7 +26,7 @@ export default function ConfigsForm({
             />
           ),
         },
-        { title: "Step", component: <StepForm /> },
+        { title: "Step", component: <StepForm steps={catalog.steps} /> },
       ]}
     />
   );
