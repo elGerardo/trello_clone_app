@@ -6,13 +6,16 @@ import {
 } from "@heroicons/react/24/outline";
 import Tooltip from "../tooltip";
 import { IHeaderButtons } from "@/contracts/header.interface";
+import { useState } from "react";
 
 export default function Header({
   className,
   handleClick,
+  userId = ""
 }: {
   className: string;
   handleClick?: (data: IHeaderButtons) => void;
+  userId?: string
 }) {
   const handleOnClick = (data: IHeaderButtons) => {
     if (handleClick) handleClick(data);
@@ -21,7 +24,7 @@ export default function Header({
   return (
     <div className={`${className} flex justify-between`}>
       <div className="ml-4">
-        <Input defaultValue="AAA1223040" className="py-2 pl-2 text-sm" />
+        <Input defaultValue={userId} className="py-2 pl-2 text-sm" />
         <Button kind="primary" className="py-2 px-1.5 text-sm" onClick={() => handleOnClick({ button: "download_id" })}>
           Download ID
         </Button>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./draggableCard";
 import { ISteps } from "@/contracts/steps.interface";
-import Delay from "@/app/helpers/delay";
 
 export default function Board({
   steps = [],
@@ -111,19 +110,36 @@ export default function Board({
     <DragDropContext
       onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
     >
-      <div className="flex mt-12 mx-4">
-        <div className="flex w-full min-h-96">
-          {columns.map(({ name, tasks, order }) => {
+      <div className="flex mt-12 mx-4 pb-6">
+        <div
+          className="flex w-full overflow-y-scroll"
+          style={{
+            minHeight: "80vh",
+          }}
+        >
+          {columns.map(({ name, tasks, order }, index: number) => {
             return (
               <Droppable key={order - 1} droppableId={(order - 1).toString()}>
                 {(provided) => (
                   <div
-                    className="flex flex-col relative bg-secondary mx-1 w-72 rounded-md"
+                    className={`flex flex-col relative mx-1 min-w-72 max-w-72 rounded-md pb-4 ${
+                      columns.length === index + 1
+                        ? "bg-success-100"
+                        : "bg-secondary"
+                    }`}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    <h2 className="mx-2 mt-4 font-bold">{name}</h2>
-                    <hr className="my-2 mx-2"/>
+                    <h2
+                      className={`mx-2 mt-4 font-bold ${
+                        columns.length === index + 1
+                          ? "text-success"
+                          : "text-primary"
+                      }`}
+                    >
+                      {name}
+                    </h2>
+                    <hr className="my-2 mx-2" />
                     {tasks.map((item: any, index: number) => (
                       <DraggableCard
                         isUpdatingColumns={isUpdatingColumns}

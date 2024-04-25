@@ -6,20 +6,37 @@ import Header from "@/components/header";
 import Modal from "@/components/modal";
 import Spinner from "@/components/spinner/indes";
 import { IHeaderButtons } from "@/contracts/header.interface";
+import GenerateUser from "@/helpers/generateUser";
 import CatalogService from "@/services/CatalogService";
 import PriorityService from "@/services/PriorityService";
+import StepService from "@/services/StepService";
 import TaskService from "@/services/TaskService";
+import UserService from "@/services/UserService";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  let catalogService: CatalogService = new CatalogService("AAA1223040");
-  let taskService: TaskService = new TaskService("AAA1223040");
-  let priorityService: PriorityService = new PriorityService("AAA1223040")
   const [modalForm, setModalForm]: any = useState(null);
   const [steps, setSteps] = useState([]);
   const [priorities, setpPriorities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoadingSteps, setIsLoadSteps] = useState(true);
+  const [userId, setUserId] = useState("");
+
+  let catalogService: CatalogService = new CatalogService(userId);
+  let taskService: TaskService = new TaskService(userId);
+  let priorityService: PriorityService = new PriorityService(userId)
+  let stepService: StepService = new StepService(userId)
+
+  const createUser = async (userId: string) => {
+    await UserService.store({ id: userId })
+    taskService = new TaskService(userId)
+    stepService = new StepService(userId)
+    priorityService = new PriorityService(userId)
+    catalogService = new CatalogService(userId)
+    localStorage.setItem("userId", userId)
+    setUserId(userId)
+    fetchSteps();  
+  }
 
   const fetchSteps = async () => {
     const { steps, priorities }: any = await catalogService.get();
@@ -60,6 +77,14 @@ export default function Home() {
       setIsLoadSteps(true);
       await fetchSteps();
       setIsModalOpen(false);
+    },
+    step: async(data: object) => {
+      const { status } = await stepService.store(data)
+      if (status !== 201) return
+
+      setIsLoadSteps(true);
+      await fetchSteps();
+      setIsModalOpen(false);
     }
   };
 
@@ -91,6 +116,18 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const user = localStorage.getItem("userId")
+    if(user == null) {
+      const userGenerated = GenerateUser.handle()
+      createUser(userGenerated)
+      return
+    }
+
+    setUserId(user)
+    taskService = new TaskService(user)
+    stepService = new StepService(user)
+    priorityService = new PriorityService(user)
+    catalogService = new CatalogService(user)
     fetchSteps();
   }, []);
 
@@ -102,6 +139,7 @@ export default function Home() {
       <Header
         className="w-full mt-5"
         handleClick={(data: IHeaderButtons) => handleOnClickHeader(data)}
+        userId={userId}
       />
       {isLoadingSteps && (
         <div className="w-full">

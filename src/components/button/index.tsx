@@ -7,12 +7,14 @@ const formatTypes = {
     children,
     kind,
     onClick,
-    className = ''
+    className = '',
+    disabled = false
   }: {
     children?: React.ReactNode;
     kind?: "primary" | "secondary";
     onClick?: (event: any) => void;
     className?: string;
+    disabled?: boolean
   }) {
     const handleOnClick = (event: any) => {
       if (onClick) {
@@ -21,8 +23,9 @@ const formatTypes = {
     };
     return (
       <button
-        className={`${kind === undefined ? "btn-primary" : formatTypes[kind]} ${className} `}
+        className={`${disabled ? "btn-disabled" :  kind === undefined ? "btn-primary" : formatTypes[kind]} ${className} `}
         onClick={(event) => handleOnClick(event)}
+        disabled={disabled}
       >
         {children}
       </button>

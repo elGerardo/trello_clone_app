@@ -83,7 +83,7 @@ export default function TaskForm({
         placeholder="Description..."
         label="Task Description"
       />
-      <div className="flex justify-around">
+      <div className="md:flex justify-around">
         <DropDown
           className="w-full"
           data={catalog.steps}
@@ -93,7 +93,7 @@ export default function TaskForm({
         <DropDown
           data={catalog.priorities}
           onChange={(data: IDropdownData) => handlePrioritypOnChange(data)}
-          className="ml-4 w-64"
+          className="md:ml-4 md:w-64"
           label="Choose a Priority"
         />
       </div>

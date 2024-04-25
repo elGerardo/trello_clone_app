@@ -15,7 +15,7 @@ export default function Tabs({ components }: { components: Array<{component : Re
               className={({ selected }) =>
                 classNames(
                   'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                  'ring-white/60 ring-offset-2 ring-offset-primary focus:outline-none focus:ring-2',
+                  'ring-white/60 ring-offset-2  focus:outline-none',
                   selected
                     ? 'bg-white text-dark shadow'
                     : 'text-dark hover:text-c-gray-300'

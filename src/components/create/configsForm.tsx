@@ -26,7 +26,7 @@ export default function ConfigsForm({
             />
           ),
         },
-        { title: "Step", component: <StepForm steps={catalog.steps} /> },
+        { title: "Step", component: <StepForm steps={catalog.steps} onSubmit={(data: object) => handleOnSubmit(data)} /> },
       ]}
     />
   );

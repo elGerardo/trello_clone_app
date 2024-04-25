@@ -28,24 +28,28 @@ const DraggableCard = ({
       draggableId={draggableId.toString()}
       index={index}
     >
-      {(provided) => (
+      {(provided, snapshot) => (
         <div
-          className={
-            isUpdatingColumns ? "pointer-events-none" : "pointer-events-auto"
-          }
+          className={`${
+            isUpdatingColumns
+              ? "pointer-events-none"
+              : "pointer-events-auto max-w-72"
+          } 
+            `}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={handleOnClick}
         >
           <div
-            className={`rounded-md text-xs p-3 mt-2 mx-2 ${
-              isUpdatingColumns ? "bg-c-gray-100" : "bg-white"
-            }`}
+            className={`rounded-md text-xs p-3 mt-2 mx-2 max-w-72 
+            ${isUpdatingColumns ? "bg-c-gray-200" : "bg-white"}              
+            ${snapshot.isDragging && "!shadow-2xl"}
+            `}
           >
-            <Badge text={item.priority.name} color={item.priority.color}/>
-            <p className="text-base font-bold mt-3">{item.title}</p>
-            <p className="text-c-gray-300">
+            <Badge text={item.priority.name} color={item.priority.color} />
+            <p className="text-base font-bold mt-3 max-w-72">{item.title}</p>
+            <p className="text-c-gray-300 max-w-72">
               {item.description.length > 100
                 ? item.description.substring(0, 100) + "..."
                 : item.description}

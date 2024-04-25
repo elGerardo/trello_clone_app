@@ -33,7 +33,6 @@ export default class PriorityService {
   }
 
   public async store(data: object) {
-    console.log(data)
     let response: any = {};
     let status: any = 201;
 
