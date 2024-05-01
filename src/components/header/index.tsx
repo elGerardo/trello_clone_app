@@ -1,3 +1,4 @@
+'use client'
 import Input from "../input";
 import Button from "../button";
 import {
@@ -6,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Tooltip from "../tooltip";
 import { IHeaderButtons } from "@/contracts/header.interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Header({
   className,
@@ -17,19 +18,35 @@ export default function Header({
   handleClick?: (data: IHeaderButtons) => void;
   userId?: string
 }) {
-  const handleOnClick = (data: IHeaderButtons) => {
-    if (handleClick) handleClick(data);
+  const [userIdentificator, setUserIdentificator] = useState(userId)
+  const [isThinking, setIsThinking] = useState(false)
+  
+  const handleOnClick = async (data: IHeaderButtons) => {
+    if(isThinking && data.button == 'download_id') data = { button: 'update_user' , user_id: userIdentificator }
+    if (handleClick) {
+      const result: any = await handleClick(data)
+      if(data.button == 'update_user' && result) setIsThinking(false)
+    };
   };
+
+  const handleOnChangeUserId = (value: string) => {
+    setUserIdentificator(value)
+    setIsThinking(true)
+  }
+
+  useEffect(() => {
+    setUserIdentificator(userId)
+  }, [userId])
 
   return (
     <div className={`${className} flex justify-between`}>
       <div className="ml-4">
-        <Input defaultValue={userId} className="py-2 pl-2 text-sm" />
-        <Button kind="primary" className="py-2 px-1.5 text-sm" onClick={() => handleOnClick({ button: "download_id" })}>
-          Download ID
+        <Input value={userIdentificator} className="py-2 pl-2 text-sm" onChange={(value) => handleOnChangeUserId(value)}/>
+        <Button kind="primary" className="py-2 px-1.5 text-sm" onClick={() => handleOnClick({ button: 'download_id' , user_id: userId })}>
+        {!isThinking ? 'Download ID' : 'Load Data'}
         </Button>
         <span className="block text-xs text-c-gray-300">
-          Download your ID to never lose your data
+          {!isThinking ? 'Download your ID to never lose your data' : 'Load your data based In Your ID'}
         </span>
       </div>
       <div className="mr-4">

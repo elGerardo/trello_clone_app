@@ -10,9 +10,9 @@ export default class CatalogService {
         this.userId = userId
     }
 
-    public async get(): Promise<{ steps: Array<ISteps>, priorities: Array<IPriority> }> {
+    public async get(): Promise<{ steps: Array<ISteps>, step_status: boolean, priorities: Array<IPriority>, priorities_status: boolean }> {
         const steps = await new StepService(this.userId).get()
         const priorities = await new PriorityService(this.userId).get()
-        return { steps: steps.response, priorities: priorities.response }
+        return { steps: steps.response, step_status: steps.status, priorities: priorities.response, priorities_status: priorities.status }
     }
 }

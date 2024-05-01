@@ -7,4 +7,5 @@ export interface ITask {
   secuence: number;
   is_finished: boolean;
   priority: IPriority
+  step_id: string
 }

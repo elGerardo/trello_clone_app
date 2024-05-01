@@ -1,19 +1,30 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 
 export default function DropDown({
-  data = [{ label: "Options", value: null, color: undefined }],
+  data = [{ label: "Options", value: null, color: undefined, id: "" }],
   onChange,
   className,
-  label
+  itemsClassName,
+  itemClassName,
+  label,
+  defaultValue
 }: {
-  data?: Array<{ value: string | null; label: string; color?: string }>;
+  data?: Array<{ value: string | null; label: string; color?: string, id: string }>;
   onChange?: (event: any) => void;
   className?: string;
+  itemsClassName?: string,
+  itemClassName?: string,
   label?: string
+  defaultValue?: string
 }) {
-  const [selected, setSelected] = useState(data[0]);
+  let defaultIndex = 0
+  if(defaultValue != null) {
+    defaultIndex = data.findIndex(row => row.id === defaultValue)
+  }
+
+  const [selected, setSelected] = useState(data[defaultIndex]);
   const handleOnChangeSelected = (data: any) => {
     setSelected(data);
     if (onChange) onChange(data);
@@ -36,7 +47,7 @@ export default function DropDown({
                   selected.color == null ? "" : selected.color
                 }`,
               }}
-              className="block truncate px-2 py-1 rounded-md"
+              className={`block truncate px-2 py-1 rounded-md ${itemClassName}`}
             >
               {selected.label}
             </span>
@@ -72,7 +83,7 @@ export default function DropDown({
                               item.color == null ? "" : item.color
                             }`,
                           }}
-                          className="block truncate px-2 py-1 rounded-md"
+                          className={`block truncate px-2 py-1 rounded-md  ${itemsClassName}`}
                         >
                           {item.label}
                         </span>

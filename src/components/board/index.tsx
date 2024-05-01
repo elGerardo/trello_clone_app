@@ -2,18 +2,40 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./draggableCard";
 import { ISteps } from "@/contracts/steps.interface";
+import Delay from "@/helpers/delay";
+import { ITask } from "@/contracts/tasks.interface";
 
 export default function Board({
   steps = [],
   handleOnClick,
   handleColumnUpdated,
+  onClickCheckedItem,
 }: {
   handleColumnUpdated?: (columns: Array<object>) => void;
-  handleOnClick?: () => void;
+  handleOnClick?: (item: ITask) => void;
+  onClickCheckedItem?: (item_id: string) => Promise<boolean>;
   steps: Array<ISteps>;
 }) {
   const [columns, setColumns] = useState(steps);
   const [isUpdatingColumns, setIsUpdatingColumns] = useState(false);
+
+  const handleIsOnClickChecked = async (step_id: string, item_id: string) => {
+    let result = false;
+    if (onClickCheckedItem) result = await onClickCheckedItem(item_id);
+    if (!result) return false;
+    let newData = columns;
+    newData = columns.map((step) => {
+      // Solo aplicamos la eliminación si el parentId coincide
+      if (step.id === step_id) {
+        // Filtramos las tareas para eliminar la que tenga el taskId especificado
+        step.tasks = step.tasks.filter((task) => task.id !== item_id);
+      }
+      return step;
+    });
+    await Delay.handle(1000);
+    setColumns(newData);
+    return true;
+  };
 
   const onDragEnd = async (result: any, columns: any, setColumns: any) => {
     setIsUpdatingColumns(true);
@@ -102,8 +124,8 @@ export default function Board({
     setIsUpdatingColumns(false);
   };
 
-  const handleIsOnClick = () => {
-    if (handleOnClick) handleOnClick();
+  const handleIsOnClick = (item: ITask) => {
+    if (handleOnClick) handleOnClick(item);
   };
 
   return (
@@ -117,7 +139,7 @@ export default function Board({
             minHeight: "80vh",
           }}
         >
-          {columns.map(({ name, tasks, order }, index: number) => {
+          {columns.map(({ name, tasks, order, is_default }, index: number) => {
             return (
               <Droppable key={order - 1} droppableId={(order - 1).toString()}>
                 {(provided) => (
@@ -147,7 +169,11 @@ export default function Board({
                         item={item}
                         index={index}
                         parentOrder={order}
-                        handleIsOnClick={() => handleIsOnClick()}
+                        handleIsOnClick={(item: ITask) => handleIsOnClick(item)}
+                        isStepDone={is_default && name == "Done"}
+                        onClickChecked={(step_id: string, item_id: string) =>
+                          handleIsOnClickChecked(step_id, item_id)
+                        }
                       />
                     ))}
                     {provided.placeholder}

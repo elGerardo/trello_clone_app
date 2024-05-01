@@ -14,17 +14,37 @@ export default function TaskForm({
   catalog,
   className = "",
   onClose,
+  stepDefault,
+  priorityDefault,
+  taskTitle = "",
+  taskDescription = "",
+  itemId,
+  isUpdate = false,
 }: {
   onSubmit?: (data: object) => void;
   onClose?: () => void;
   catalog: { steps: Array<ISteps>; priorities: Array<IPriority> };
   className?: string;
+  stepDefault?: string;
+  priorityDefault?: string;
+  taskTitle?: string;
+  taskDescription?: string;
+  isUpdate?: boolean;
+  itemId?: string;
 }) {
   const [isSubmit, setIsSubmit] = useState(false);
-  const title: any = useRef();
-  const [description, setDescription]: any = useState(null);
-  const [stepId, setStepId] = useState(catalog.steps[0].value);
-  const [priorityId, setPriorityId] = useState(catalog.priorities[0].value);
+  const title = useRef(taskTitle);
+  const [description, setDescription]: any = useState(taskDescription);
+  let defaultStepIndex = 0
+  if(stepDefault != null) {
+    defaultStepIndex = catalog.steps.findIndex(row => row.id === stepDefault)
+  }
+  let defaultPriorityIndex = 0
+  if(priorityDefault != null) {
+    defaultPriorityIndex = catalog.priorities.findIndex(row => row.id === priorityDefault)
+  }
+  const [stepId, setStepId] = useState(catalog.steps[defaultStepIndex].value);
+  const [priorityId, setPriorityId] = useState(catalog.priorities[defaultPriorityIndex].value);
 
   const handleonChangeDescription = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -44,14 +64,20 @@ export default function TaskForm({
     e: React.FormEvent<HTMLFormControlsCollection>
   ) => {
     e.preventDefault();
+    let itemTitle: any = title;
     if (onSubmit && isSubmit) {
+      console.log('alksdjalksdj')
+
       onSubmit({
-        form: "task",
+        ...(isUpdate === true ? { form: "update_task" } : { form: "task" }),
         description,
         isSubmit,
         priority_id: priorityId,
+        ...(itemId && { item_id: itemId }),
         step_id: stepId,
-        ...(title.current.value != null && { title: title.current.value }),
+        ...(itemTitle.current.value != null && {
+          title: itemTitle.current.value,
+        }),
       });
     }
   };
@@ -70,6 +96,7 @@ export default function TaskForm({
         />
       </div>
       <Input
+        defaultValue={taskTitle}
         inputRef={title}
         className="w-full px-4 py-2 my-2"
         placeholder="Task title..."
@@ -89,12 +116,16 @@ export default function TaskForm({
           data={catalog.steps}
           onChange={(data: IDropdownData) => handleStepOnChange(data)}
           label="Choose an Step"
+          defaultValue={stepDefault}
         />
         <DropDown
           data={catalog.priorities}
           onChange={(data: IDropdownData) => handlePrioritypOnChange(data)}
           className="md:ml-4 md:w-64"
           label="Choose a Priority"
+          itemClassName="text-secondary"
+          itemsClassName="text-secondary"
+          defaultValue={priorityDefault}
         />
       </div>
       <Button
@@ -102,7 +133,7 @@ export default function TaskForm({
         onClick={() => setIsSubmit(true)}
         className="px-6 py-1.5 rounded my-4"
       >
-        Save
+        {!isUpdate ? "Save" : "Update"}
       </Button>
     </Form>
   );

@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import Modal from "@/components/modal";
 import Spinner from "@/components/spinner/indes";
 import { IHeaderButtons } from "@/contracts/header.interface";
+import { ITask } from "@/contracts/tasks.interface";
 import GenerateUser from "@/helpers/generateUser";
 import CatalogService from "@/services/CatalogService";
 import PriorityService from "@/services/PriorityService";
@@ -24,37 +25,58 @@ export default function Home() {
 
   let catalogService: CatalogService = new CatalogService(userId);
   let taskService: TaskService = new TaskService(userId);
-  let priorityService: PriorityService = new PriorityService(userId)
-  let stepService: StepService = new StepService(userId)
+  let priorityService: PriorityService = new PriorityService(userId);
+  let stepService: StepService = new StepService(userId);
 
   const createUser = async (userId: string) => {
-    await UserService.store({ id: userId })
-    taskService = new TaskService(userId)
-    stepService = new StepService(userId)
-    priorityService = new PriorityService(userId)
-    catalogService = new CatalogService(userId)
-    localStorage.setItem("userId", userId)
-    setUserId(userId)
-    fetchSteps();  
-  }
+    await UserService.store({ id: userId });
+    taskService = new TaskService(userId);
+    stepService = new StepService(userId);
+    priorityService = new PriorityService(userId);
+    catalogService = new CatalogService(userId);
+    localStorage.setItem("userId", userId);
+    setUserId(userId);
+    fetchSteps();
+  };
 
   const fetchSteps = async () => {
-    const { steps, priorities }: any = await catalogService.get();
+    const { steps, priorities, step_status }: any = await catalogService.get();
     setSteps(steps);
     setpPriorities(priorities);
     setIsLoadSteps(false);
+    return step_status;
   };
 
-  const handleOnClickHeader = (data: IHeaderButtons) => {
-    forms[data.button]();
+  const handleOnClickHeader = async (data: IHeaderButtons) => {
+    const result = await forms[data.button](data);
+    return result;
   };
 
   const handleColumnUpdated = async (data: Array<object>) => {
     await taskService.bulkUpdate(data);
   };
 
-  const handleOnClickViewTask = () => {
-    console.log("open modal to see task");
+  const handleOnClickCheckedItem = async (item_id: string) => {
+    const { status } = await taskService.destroy(item_id);
+    if (status != 204) return false;
+    return true;
+  };
+
+  const handleOnClickViewTask = (item: ITask) => {
+    setIsModalOpen(true);
+    setModalForm(
+      <TaskForm
+        className={"mb-28 xl:px-56"}
+        catalog={{ steps, priorities }}
+        stepDefault={item.step_id}
+        priorityDefault={item.priority.id}
+        taskTitle={item.title}
+        taskDescription={item.description}
+        onSubmit={(data) => handleOnSubmit(data)}
+        itemId={item.id}
+        isUpdate={true}
+        />
+    );
   };
 
   const handleOnCloseModal = () => {
@@ -64,35 +86,43 @@ export default function Home() {
   const formsSubmits: any = {
     task: async (data: object) => {
       const { status } = await taskService.store(data);
-      if (status !== 201) return
+      if (status !== 201) return;
+
+      setIsLoadSteps(true);
+      await fetchSteps();
+      setIsModalOpen(false);
+    },
+    update_task: async (data: object) => {
+      const { status } = await taskService.update(data);
+      if (status !== 202) return;
 
       setIsLoadSteps(true);
       await fetchSteps();
       setIsModalOpen(false);
     },
     priority: async (data: object) => {
-      const { status } = await priorityService.store(data)
-      if (status !== 201) return
+      const { status } = await priorityService.store(data);
+      if (status !== 201) return;
 
       setIsLoadSteps(true);
       await fetchSteps();
       setIsModalOpen(false);
     },
-    step: async(data: object) => {
-      const { status } = await stepService.store(data)
-      if (status !== 201) return
+    step: async (data: object) => {
+      const { status } = await stepService.store(data);
+      if (status !== 201) return;
 
       setIsLoadSteps(true);
       await fetchSteps();
       setIsModalOpen(false);
-    }
+    },
   };
 
   const handleOnSubmit = async (data: any) => {
-    await formsSubmits[data["form"]](data)
+    await formsSubmits[data["form"]](data);
   };
 
-  const forms = {
+  const forms: any = {
     create_task: () => {
       setModalForm(
         <TaskForm
@@ -104,30 +134,62 @@ export default function Home() {
       );
       setIsModalOpen(true);
     },
-    download_id: () => {
-      console.log("downloading id");
+    download_id: (data: any) => {
+      const tempAnchor = document.createElement("a");
+      const text = encodeURIComponent(data.user_id);
+      tempAnchor.setAttribute("href", "data:text/plain;charset=utf-8," + text);
+      tempAnchor.setAttribute("download", "MyId.txt");
+      tempAnchor.style.display = "none";
+      document.body.appendChild(tempAnchor);
+      tempAnchor.click();
+      document.body.removeChild(tempAnchor);
+    },
+    update_user: async (data: any) => {
+      setIsLoadSteps(true);
+      taskService = new TaskService(data.user_id);
+      stepService = new StepService(data.user_id);
+      priorityService = new PriorityService(data.user_id);
+      catalogService = new CatalogService(data.user_id);
+      const result = await fetchSteps();
+      if (result === 200) {
+        localStorage.setItem("userId", data.user_id);
+        setUserId(data.user_id);
+        setIsLoadSteps(false);
+        return true;
+      }
+
+      setIsLoadSteps(true);
+      taskService = new TaskService(userId);
+      stepService = new StepService(userId);
+      priorityService = new PriorityService(userId);
+      catalogService = new CatalogService(userId);
+      fetchSteps();
+      return false;
     },
     view_board: () => {
       setModalForm(
-        <ConfigsForm onSubmit={(data: object) => handleOnSubmit(data)} catalog={{ steps: steps }} />
+        <ConfigsForm
+          onSubmit={(data: object) => handleOnSubmit(data)}
+          catalog={{ steps: steps }}
+        />
       );
       setIsModalOpen(true);
     },
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("userId")
-    if(user == null) {
-      const userGenerated = GenerateUser.handle()
-      createUser(userGenerated)
-      return
+    const user = localStorage.getItem("userId");
+    if (user == null) {
+      const userGenerated = GenerateUser.handle();
+      createUser(userGenerated);
+      return;
     }
 
-    setUserId(user)
-    taskService = new TaskService(user)
-    stepService = new StepService(user)
-    priorityService = new PriorityService(user)
-    catalogService = new CatalogService(user)
+    setUserId(user);
+    taskService = new TaskService(user);
+    stepService = new StepService(user);
+    priorityService = new PriorityService(user);
+    catalogService = new CatalogService(user);
     fetchSteps();
   }, []);
 
@@ -149,8 +211,11 @@ export default function Home() {
       {!isLoadingSteps && (
         <Board
           steps={steps}
-          handleOnClick={() => handleOnClickViewTask()}
+          handleOnClick={(item: ITask) => handleOnClickViewTask(item)}
           handleColumnUpdated={(data) => handleColumnUpdated(data)}
+          onClickCheckedItem={(item_id: string) =>
+            handleOnClickCheckedItem(item_id)
+          }
         />
       )}
     </main>

@@ -32,7 +32,7 @@ export default function Input({
         {...(inputRef !== undefined && { ref: inputRef })}
         placeholder={placeholder}
         className={`${className}`}
-        defaultValue={defaultValue}
+        {...(defaultValue !== undefined && value == undefined && { defaultValue })}
         type={type}
         disabled={disabled}
         required={required}
