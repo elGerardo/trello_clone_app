@@ -6,17 +6,18 @@ import React, { useRef, useState } from "react";
 
 const COLOR_OPTIONS = [
   "#FFFFFF",
-  "#FFFE91",
-  "#FF9492",
-  "#FFB18A",
-  "#FFCE7F",
-  "#97FE93",
-  "#04FDC9",
-  "#4CCEE4",
-  "#6AAEFF",
-  "#AF92FF",
-  "#FF9DFF",
+  "#FA94A5",
+  "#DC6A7D",
+  "#DCFCE6",
+  "#C4F8B4",
+  "#EDFBD5",
+  "#D7F6A2",
+  "#FEF9C3",
+  "#FDF59B",
+  "#DBEAFE",
+  "#9CC6FC",
   "#FFC8FF",
+  "#FF9DFF"
 ];
 
 export default function PriorityForm({

@@ -13,6 +13,7 @@ import PriorityService from "@/services/PriorityService";
 import StepService from "@/services/StepService";
 import TaskService from "@/services/TaskService";
 import UserService from "@/services/UserService";
+import { stat } from "fs";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -75,7 +76,7 @@ export default function Home() {
         onSubmit={(data) => handleOnSubmit(data)}
         itemId={item.id}
         isUpdate={true}
-        />
+      />
     );
   };
 
@@ -120,6 +121,22 @@ export default function Home() {
 
   const handleOnSubmit = async (data: any) => {
     await formsSubmits[data["form"]](data);
+  };
+
+  const handleStepsUpdate = async (
+    data: Array<{ id: string; order: number }>
+  ) => {
+    setIsLoadSteps(true);
+    await stepService.bulkUpdate(data);
+    await fetchSteps();
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteTask = async (step_id: string) => {
+    setIsLoadSteps(true);
+    const { status } = await stepService.destroy(step_id);
+    if (status === 204) await fetchSteps();
+    setIsModalOpen(false);
   };
 
   const forms: any = {
@@ -171,6 +188,10 @@ export default function Home() {
         <ConfigsForm
           onSubmit={(data: object) => handleOnSubmit(data)}
           catalog={{ steps: steps }}
+          onHandleStepsUpdate={(data: Array<{ id: string; order: number }>) =>
+            handleStepsUpdate(data)
+          }
+          onHandleDeleteTask={(step_id: string) => handleDeleteTask(step_id)}
         />
       );
       setIsModalOpen(true);

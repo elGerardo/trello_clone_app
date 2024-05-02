@@ -44,6 +44,7 @@ export default function Board({
     if (source.droppableId !== destination.droppableId) {
       const newData = columns;
       const sourceColumn = newData[source.droppableId];
+
       const sourceItems = sourceColumn.tasks[source.index];
       const destinationColumn = newData[destination.droppableId];
 
@@ -153,15 +154,14 @@ export default function Board({
                     {...provided.droppableProps}
                   >
                     <h2
-                      className={`mx-2 mt-4 font-bold ${
+                      className={`mx-2 mt-4 font-bold bg-white rounded p-3 mb-2 ${
                         columns.length === index + 1
                           ? "text-success"
                           : "text-primary"
                       }`}
                     >
-                      {name}
+                      {name} <span className="text-c-gray-300 ml-3">{tasks.length > 0 && tasks.length}</span>
                     </h2>
-                    <hr className="my-2 mx-2" />
                     {tasks.map((item: any, index: number) => (
                       <DraggableCard
                         isUpdatingColumns={isUpdatingColumns}

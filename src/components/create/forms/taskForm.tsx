@@ -66,8 +66,6 @@ export default function TaskForm({
     e.preventDefault();
     let itemTitle: any = title;
     if (onSubmit && isSubmit) {
-      console.log('alksdjalksdj')
-
       onSubmit({
         ...(isUpdate === true ? { form: "update_task" } : { form: "task" }),
         description,

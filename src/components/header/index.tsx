@@ -46,7 +46,7 @@ export default function Header({
         {!isThinking ? 'Download ID' : 'Load Data'}
         </Button>
         <span className="block text-xs text-c-gray-300">
-          {!isThinking ? 'Download your ID to never lose your data' : 'Load your data based In Your ID'}
+          {!isThinking ? 'Download your ID to never lose your data' : 'Load your data based in your ID'}
         </span>
       </div>
       <div className="mr-4">
