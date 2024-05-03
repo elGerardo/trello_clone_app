@@ -39,7 +39,7 @@ export default function MenuDropdown({
             <div className="  ">
               {options.map((item, index) => {
                 return (
-                  <Menu.Item>
+                  <Menu.Item key={item}>
                     <div
                       key={`${index}-${item}`}
                       className={`inline-block rounded mx-1 my-1 h-10 w-10 cursor-pointer ${
