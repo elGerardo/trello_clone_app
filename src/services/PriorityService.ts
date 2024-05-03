@@ -12,7 +12,7 @@ export default class PriorityService {
     let status: any = 200;
 
     await axios
-      .get(`http://localhost:80/trello_clone/priority`, {
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/priority`, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -37,7 +37,7 @@ export default class PriorityService {
     let status: any = 201;
 
     await axios
-      .post(`http://localhost:80/trello_clone/priority`, data, {
+      .post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/priority`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",

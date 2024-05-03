@@ -12,7 +12,7 @@ export default class TaskService {
     let status: any = 201;
 
     await axios
-      .post(`http://localhost/trello_clone/tasks`, data, {
+      .post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -37,7 +37,7 @@ export default class TaskService {
     let status: any = 202;
 
     await axios
-      .put(`http://localhost/trello_clone/tasks/${data.item_id}`, data, {
+      .put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${data.item_id}`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -62,7 +62,7 @@ export default class TaskService {
     let status: any = 200;
 
     await axios
-      .put(`http://localhost/trello_clone/tasks/bulk_update/`, data, {
+      .put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/bulk_update/`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -87,7 +87,7 @@ export default class TaskService {
     let status: any = 204;
 
     await axios
-      .delete(`http://localhost/trello_clone/tasks/${item_id}`, {
+      .delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${item_id}`, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",

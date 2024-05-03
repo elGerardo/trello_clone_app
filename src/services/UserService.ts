@@ -6,7 +6,7 @@ export default class UserService {
     let status: any = 201;
 
     await axios
-      .post(`http://localhost/trello_clone/user`, data, {
+      .post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",

@@ -12,7 +12,7 @@ export default class StepService {
     let status: any = 200;
 
     await axios
-      .post(`http://localhost:80/trello_clone/steps`, data, {
+      .post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/steps`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -37,7 +37,7 @@ export default class StepService {
     let status: any = 200;
 
     await axios
-      .put(`http://localhost:80/trello_clone/steps/bulk_update/`, data, {
+      .put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/steps/bulk_update/`, data, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -62,7 +62,7 @@ export default class StepService {
     let status: any = 200;
 
     await axios
-      .get(`http://localhost:80/trello_clone/steps`, {
+      .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/steps`, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
@@ -87,7 +87,7 @@ export default class StepService {
     let status: any = 204;
 
     await axios
-      .delete(`http://localhost:80/trello_clone/steps/${step_id}`, {
+      .delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/steps/${step_id}`, {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
